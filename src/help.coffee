@@ -59,7 +59,10 @@ module.exports = (robot) ->
   replyInPrivate = process.env.HUBOT_HELP_REPLY_IN_PRIVATE
 
   robot.respond /help(?:\s+(.*))?$/i, (msg) ->
-    cmds = renamedHelpCommands(robot)
+    cmds = []
+    for str in renamedHelpCommands(robot)
+      cmd = str.split " - "
+      cmds.push "`#{cmd[0]}` - #{cmd[1]}"
     filter = msg.match[1]
 
     if filter
@@ -68,6 +71,9 @@ module.exports = (robot) ->
       if cmds.length == 0
         msg.send "No available commands match #{filter}"
         return
+
+    cmds.push ""
+    cmds.push "remember to prefix commands with robot name (`#{robot.name}`) in channels, but not in direct messages"
 
     emit = cmds.join "\n"
 
